@@ -13,12 +13,12 @@ func (b *Bot) joinOrLeaveHandler(p *payload.MessageCreated) {
 	log.Debug("Received MESSAGE_CREATED event: " + m.Text + " / " + m.PlainText)
 
 	if b.env == EnvProduction {
-		if m.PlainText == "@BOT_no_hito きて" {
+		if m.PlainText == "@BOT_salmon /join" {
 			b.joinChannel(m)
 			return
 		}
 
-		if m.PlainText == "@BOT_no_hito でてって" {
+		if m.PlainText == "@BOT_no_hito /leave" {
 			b.leaveChannel(m)
 			return
 		}

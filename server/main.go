@@ -27,6 +27,8 @@ func main() {
 
 	b := bot.New(traQBotId, traQAccessToken, isLocal == "true")
 
+	log.SetLevel(log.DebugLevel)
+
 	db, err := database.NewClientAndMigrate(dbUser, dbPass, dbHost, dbPort, dbName)
 	if err != nil {
 		log.Fatal(err)

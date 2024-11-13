@@ -13,12 +13,12 @@ func (b *Bot) joinOrLeaveHandler(p *payload.MessageCreated) {
 	log.Debug("Received MESSAGE_CREATED event: " + m.Text + " / " + m.PlainText)
 
 	if b.env == EnvProduction {
-		if m.PlainText == "@BOT_salmon /join" {
+		if m.PlainText == "@BOT_salmon /summon" {
 			b.joinChannel(m)
 			return
 		}
 
-		if m.PlainText == "@BOT_no_hito /leave" {
+		if m.PlainText == "@BOT_no_hito /dismiss" {
 			b.leaveChannel(m)
 			return
 		}
@@ -37,7 +37,7 @@ func (b *Bot) joinOrLeaveHandler(p *payload.MessageCreated) {
 
 func (b *Bot) joinChannel(m payload.Message) {
 	if m.User.Name != "Takeno_hito" {
-		err := b.PostMessage(context.Background(), m.ChannelID, ":dare:")
+		err := b.PostMessage(context.Background(), m.ChannelID, "Takeno_hito をよんでください")
 		if err != nil {
 			log.Error(err)
 		}
@@ -55,13 +55,13 @@ func (b *Bot) joinChannel(m payload.Message) {
 		return
 	}
 
-	err = b.PostMessage(context.Background(), m.ChannelID, ":trasta_general.large:")
+	err = b.PostMessage(context.Background(), m.ChannelID, ":salmon-sushi.large:")
 	return
 }
 
 func (b *Bot) leaveChannel(m payload.Message) {
 	if m.User.Name != "Takeno_hito" {
-		err := b.PostMessage(context.Background(), m.ChannelID, ":dare:")
+		err := b.PostMessage(context.Background(), m.ChannelID, "Takeno_hito をよんでください")
 		if err != nil {
 			log.Error(err)
 		}
@@ -79,6 +79,6 @@ func (b *Bot) leaveChannel(m payload.Message) {
 		return
 	}
 
-	err = b.PostMessage(context.Background(), m.ChannelID, ":gomen.large: ばいばい…")
+	err = b.PostMessage(context.Background(), m.ChannelID, "ばいばい…")
 	return
 }

@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"github.com/traP-jp/salmon/server/bot"
-	"github.com/traP-jp/salmon/server/database"
-	"github.com/traP-jp/salmon/server/handler/traq"
+	"git.trap.jp/Takeno-hito/salmon/server/bot"
+	"git.trap.jp/Takeno-hito/salmon/server/database"
+	"git.trap.jp/Takeno-hito/salmon/server/handler/traq"
 	"github.com/traPtitech/traq-ws-bot/payload"
 )
 

@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"git.trap.jp/Takeno-hito/salmon/server/bot"
+	"git.trap.jp/Takeno-hito/salmon/server/database"
 	"github.com/gofrs/uuid"
-	"github.com/traP-jp/salmon/server/bot"
-	"github.com/traP-jp/salmon/server/database"
 	"strings"
 	"time"
 )

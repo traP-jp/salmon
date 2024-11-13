@@ -2,10 +2,10 @@ package traq
 
 import (
 	"context"
+	"git.trap.jp/Takeno-hito/salmon/server/bot"
+	"git.trap.jp/Takeno-hito/salmon/server/database"
 	"github.com/gofrs/uuid"
 	log "github.com/sirupsen/logrus"
-	"github.com/traP-jp/salmon/server/bot"
-	"github.com/traP-jp/salmon/server/database"
 	"github.com/traPtitech/traq-ws-bot/payload"
 	"time"
 )

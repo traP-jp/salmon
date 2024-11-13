@@ -1,4 +1,4 @@
-module github.com/traP-jp/salmon/server
+module git.trap.jp/Takeno-hito/salmon/server
 
 go 1.23.0
 

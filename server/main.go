@@ -1,11 +1,11 @@
 package main
 
 import (
+	"git.trap.jp/Takeno-hito/salmon/server/bot"
+	"git.trap.jp/Takeno-hito/salmon/server/database"
+	"git.trap.jp/Takeno-hito/salmon/server/handler"
 	"github.com/go-co-op/gocron/v2"
 	log "github.com/sirupsen/logrus"
-	"github.com/traP-jp/salmon/server/bot"
-	"github.com/traP-jp/salmon/server/database"
-	"github.com/traP-jp/salmon/server/handler"
 	"os"
 	"os/signal"
 	"syscall"

@@ -8,22 +8,30 @@ import (
 )
 
 // エラーメッセージを柔軟に返却させるために、エラーはここでハンドリングしない
-func (b *Bot) onMessageCreated(p *payload.MessageCreated) {
+func (b *Bot) joinOrLeaveHandler(p *payload.MessageCreated) {
 	m := p.Message
 	log.Debug("Received MESSAGE_CREATED event: " + m.Text + " / " + m.PlainText)
 
-	if m.PlainText == "@BOT_no_hito きて" || m.PlainText == "@BOT_no_hito_local きて2" {
-		b.joinChannel(m)
-		return
-	}
+	if b.env == EnvProduction {
+		if m.PlainText == "@BOT_no_hito きて" {
+			b.joinChannel(m)
+			return
+		}
 
-	if m.PlainText == "@BOT_no_hito でてって" || m.PlainText == "@BOT_no_hito_local でてって2" {
-		b.leaveChannel(m)
-		return
-	}
+		if m.PlainText == "@BOT_no_hito でてって" {
+			b.leaveChannel(m)
+			return
+		}
+	} else {
+		if m.PlainText == "@BOT_no_hito_local きて2" {
+			b.joinChannel(m)
+			return
+		}
 
-	if m.User.Name != "BOT_no_hito" {
-		log.Println("forwardMessage")
+		if m.PlainText == "@BOT_no_hito_local でてって2" {
+			b.leaveChannel(m)
+			return
+		}
 	}
 }
 
@@ -36,7 +44,7 @@ func (b *Bot) joinChannel(m payload.Message) {
 		return
 	}
 
-	_, err := b.api().BotApi.
+	_, err := b.API().BotApi.
 		LetBotJoinChannel(context.Background(), b.botID).PostBotActionJoinRequest(traq.PostBotActionJoinRequest{
 		ChannelId: m.ChannelID,
 	}).Execute()
@@ -60,7 +68,7 @@ func (b *Bot) leaveChannel(m payload.Message) {
 		return
 	}
 
-	_, err := b.api().BotApi.
+	_, err := b.API().BotApi.
 		LetBotLeaveChannel(context.Background(), b.botID).PostBotActionLeaveRequest(traq.PostBotActionLeaveRequest{
 		ChannelId: m.ChannelID,
 	}).Execute()

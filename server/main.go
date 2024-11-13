@@ -1,17 +1,63 @@
 package main
 
 import (
+	"github.com/go-co-op/gocron/v2"
 	log "github.com/sirupsen/logrus"
-	"github.com/traP-jp/requestan/server/bot"
+	"github.com/traP-jp/salmon/server/bot"
+	"github.com/traP-jp/salmon/server/database"
+	"github.com/traP-jp/salmon/server/handler"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 func main() {
-	log.Info("Welcome to requestan!")
+	log.Info("Welcome to salmon!")
 
-	bot.New(os.Getenv("TRAQ_BOT_ID"), os.Getenv("TRAQ_ACCESS_TOKEN"))
+	traQBotId := os.Getenv("TRAQ_BOT_ID")
+	traQAccessToken := os.Getenv("TRAQ_ACCESS_TOKEN")
+
+	dbUser := os.Getenv("NS_MARIADB_USER")
+	dbPass := os.Getenv("NS_MARIADB_PASSWORD")
+	dbHost := os.Getenv("NS_MARIADB_HOSTNAME")
+	dbPort := os.Getenv("NS_MARIADB_PORT")
+	dbName := os.Getenv("NS_MARIADB_DATABASE")
+	isLocal := os.Getenv("IS_LOCAL")
+
+	b := bot.New(traQBotId, traQAccessToken, isLocal == "true")
+
+	db, err := database.NewClientAndMigrate(dbUser, dbPass, dbHost, dbPort, dbName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	s, err := gocron.NewScheduler()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	h := handler.New(&b, db)
+	b.OnMessageCreated(h.HandleBotMessage)
+
+	_, err = s.NewJob(
+		gocron.DurationJob(1*time.Minute),
+		gocron.NewTask(h.JudgeVote),
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	s.Start()
+	defer func() {
+		err := s.Shutdown()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	log.Info("application has started successfully")
 

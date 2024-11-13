@@ -1,0 +1,45 @@
+version: "3"
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - "5555:5555"
+    tty: true
+    volumes:
+      - .:/go/app
+    environment:
+      MARIADB_USERNAME: admin
+      NS_MARIADB_PASSWORD: password
+      NS_MARIADB_HOSTNAME: localhost
+      NS_MARIADB_DATABASE: db
+      NS_MARIADB_PORT: 3306
+      TRAQ_BOT_ID: ${TRAQ_BOT_ID:-}
+      TRAQ_ACCESS_TOKEN: ${TRAQ_ACCESS_TOKEN:-}
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mariadb:10.7.3
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: database
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci
+    volumes:
+      - mysql:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD
+      interval: 1s
+      timeout: 10s
+      retries: 60
+  adminer:
+    image: adminer:latest
+    ports:
+      - 8081:8080
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+volumes:
+  mysql:

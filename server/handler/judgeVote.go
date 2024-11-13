@@ -57,7 +57,7 @@ func judge(b *bot.Bot, messageId string) error {
 		messages = append(messages, fmt.Sprintf("賛成票 %d 票で可決されました！", len(agreedUsersId)))
 	}
 
-	messages = append(messages, fmt.Sprintf("debug: agreed count: %s, disagreed count: %s", len(agreedUsersId), len(disagreedUsersId)))
+	messages = append(messages, fmt.Sprintf("debug: agreed count: %d, disagreed count: %d", len(agreedUsersId), len(disagreedUsersId)))
 
 	_, err = b.PostMessageEmbed(context.Background(), msg.ChannelId, fmt.Sprintf("@Takeno_hito \n\n %s", strings.Join(messages, "\n")))
 	return err

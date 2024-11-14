@@ -1,4 +1,4 @@
-package database
+package model
 
 import (
 	"fmt"
@@ -16,7 +16,6 @@ func NewClientAndMigrate(user string, pass string, host string, port string, dbn
 	if err != nil {
 		return nil, err
 	}
-
 	if err := db.AutoMigrate(&ScheduledTask{}); err != nil {
 		return nil, err
 	}

@@ -3,7 +3,7 @@ package traq
 import (
 	"context"
 	"git.trap.jp/Takeno-hito/salmon/server/bot"
-	"git.trap.jp/Takeno-hito/salmon/server/database"
+	"git.trap.jp/Takeno-hito/salmon/server/model"
 	"github.com/gofrs/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/traPtitech/traq-ws-bot/payload"
@@ -12,10 +12,10 @@ import (
 
 type Handler struct {
 	bot *bot.Bot
-	db  *database.Client
+	db  *model.Client
 }
 
-func New(b *bot.Bot, db *database.Client) Handler {
+func New(b *bot.Bot, db *model.Client) Handler {
 	return Handler{
 		bot: b,
 		db:  db,
@@ -34,7 +34,7 @@ func (h Handler) StartVote(p *payload.MessageCreated) {
 		log.Fatal(err)
 	}
 
-	if err := h.db.CreateScheduledTask("judge-vote", msgId, p.Message.CreatedAt.Add(24*time.Hour)); err != nil {
+	if err := h.db.CreateScheduledTask(model.JudgeVote, msgId, p.Message.CreatedAt.Add(24*time.Hour)); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -2,8 +2,8 @@ package main
 
 import (
 	"git.trap.jp/Takeno-hito/salmon/server/bot"
-	"git.trap.jp/Takeno-hito/salmon/server/database"
 	"git.trap.jp/Takeno-hito/salmon/server/handler"
+	"git.trap.jp/Takeno-hito/salmon/server/model"
 	"github.com/go-co-op/gocron/v2"
 	log "github.com/sirupsen/logrus"
 	"os"
@@ -29,7 +29,7 @@ func main() {
 
 	log.SetLevel(log.DebugLevel)
 
-	db, err := database.NewClientAndMigrate(dbUser, dbPass, dbHost, dbPort, dbName)
+	db, err := model.NewClientAndMigrate(dbUser, dbPass, dbHost, dbPort, dbName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,11 +42,11 @@ func main() {
 	}
 
 	h := handler.New(&b, db)
-	b.OnMessageCreated(h.HandleBotMessage)
+	b.OnMessageCreated(h.TraQMessageHandler)
 
 	_, err = s.NewJob(
 		gocron.DurationJob(1*time.Minute),
-		gocron.NewTask(h.JudgeVote),
+		gocron.NewTask(h.TaskConsumeHandler),
 	)
 
 	if err != nil {

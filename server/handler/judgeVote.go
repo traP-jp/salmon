@@ -2,13 +2,10 @@ package handler
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"git.trap.jp/Takeno-hito/salmon/server/bot"
-	"git.trap.jp/Takeno-hito/salmon/server/database"
 	"github.com/gofrs/uuid"
 	"strings"
-	"time"
 )
 
 func judge(b *bot.Bot, messageId string) error {
@@ -61,39 +58,4 @@ func judge(b *bot.Bot, messageId string) error {
 
 	_, err = b.PostMessageEmbed(context.Background(), msg.ChannelId, fmt.Sprintf("@Takeno_hito \n\n %s", strings.Join(messages, "\n")))
 	return err
-}
-
-func (h Handler) JudgeVote() error {
-	tasks, err := h.db.GetScheduledTasks()
-	if err != nil {
-		return err
-	}
-
-	for _, task := range tasks {
-		if task.Command != "judge-vote" || task.ScheduledAt.After(time.Now()) || task.ExecutedAt.Valid {
-			continue
-		}
-
-		err = h.db.UpdateScheduledTask(database.ScheduledTask{
-			Id:          task.Id,
-			Command:     task.Command,
-			Arg:         task.Arg,
-			ScheduledAt: task.ScheduledAt,
-			CreatedAt:   task.CreatedAt,
-			ExecutedAt: sql.NullTime{
-				Time:  time.Now(),
-				Valid: true,
-			},
-		})
-
-		if err != nil {
-			return err
-		}
-
-		if err = judge(h.bot, task.Arg); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

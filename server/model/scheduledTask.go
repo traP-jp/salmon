@@ -1,4 +1,4 @@
-package database
+package model
 
 import (
 	"database/sql"
@@ -6,16 +6,22 @@ import (
 	"time"
 )
 
+type CommandName string
+
+const (
+	JudgeVote CommandName = "judge-vote"
+)
+
 type ScheduledTask struct {
 	Id          string
-	Command     string
+	Command     CommandName
 	Arg         string
 	ScheduledAt time.Time
 	CreatedAt   time.Time
 	ExecutedAt  sql.NullTime
 }
 
-func (c Client) CreateScheduledTask(command string, arg string, scheduledAt time.Time) error {
+func (c Client) CreateScheduledTask(command CommandName, arg string, scheduledAt time.Time) error {
 	task := ScheduledTask{
 		Id:          uuid.NewString(),
 		Command:     command,
@@ -35,6 +41,12 @@ func (c Client) GetScheduledTask(id string) (ScheduledTask, error) {
 func (c Client) GetScheduledTasks() ([]ScheduledTask, error) {
 	var tasks []ScheduledTask
 	err := c.db.Find(&tasks).Error
+	return tasks, err
+}
+
+func (c Client) GetActiveScheduledTasks() ([]ScheduledTask, error) {
+	var tasks []ScheduledTask
+	err := c.db.Where("scheduled_at <= ? AND executed_at IS NULL", time.Now()).Find(&tasks).Error
 	return tasks, err
 }
 

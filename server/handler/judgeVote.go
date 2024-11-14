@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"git.trap.jp/Takeno-hito/salmon/server/bot"
 	"github.com/gofrs/uuid"
-	"github.com/traPtitech/go-traq"
 	"strings"
-	"time"
 )
 
 func judge(b *bot.Bot, messageId string) error {
@@ -66,21 +64,21 @@ func judge(b *bot.Bot, messageId string) error {
 		return err
 	}
 
-	location, err := time.LoadLocation("Asia/Tokyo")
-	if err != nil {
-		return err
-	}
+	//location, err := time.LoadLocation("Asia/Tokyo")
+	//if err != nil {
+	//	return err
+	//}
 
-	_, err = b.API().
-		MessageApi.EditMessage(context.Background(), msg.Id).
-		PostMessageRequest(traq.PostMessageRequest{
-			Content: fmt.Sprintf("%s\n\n【%s 更新】\n%s", msg.Content, time.Now().In(location).Format("01-02 15:04"), strings.Join(messages, "\n")),
-		}).
-		Execute()
+	//_, err = b.API().
+	//	MessageApi.EditMessage(context.Background(), msg.Id).
+	//	PostMessageRequest(traq.PostMessageRequest{
+	//		Content: fmt.Sprintf("%s\n\n【%s 更新】\n%s", msg.Content, time.Now().In(location).Format("01-02 15:04"), strings.Join(messages, "\n")),
+	//	}).
+	//	Execute()
 
-	if err != nil {
-		return err
-	}
+	//if err != nil {
+	//	return err
+	//}
 
 	return err
 }

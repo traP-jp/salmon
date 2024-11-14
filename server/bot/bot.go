@@ -70,3 +70,7 @@ func (b *Bot) OnMessageCreated(h func(p *payload.MessageCreated)) {
 func (b *Bot) API() *traq.APIClient {
 	return b.bot.API()
 }
+
+func (b *Bot) Env() Environment {
+	return b.env
+}

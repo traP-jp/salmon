@@ -23,18 +23,20 @@ func New(b *bot.Bot, db *model.Client) Handler {
 }
 
 func (h Handler) StartVote(p *payload.MessageCreated) {
-	channelId := p.Message.ChannelID
-	msgPlain := "@Takeno_hito \n役員の皆さん投票をお願いします！ 24 時間後に、投票状況に応じて自動で決議されます。投票数が足りなかったらまた来ます！"
-	msgId, err := h.bot.PostMessageEmbed(context.Background(), channelId, msgPlain)
-	if err != nil {
+	// channelId := p.Message.ChannelID
+	messageId := p.Message.ID
+
+	//msgPlain := "@Takeno_hito \n役員の皆さん投票をお願いします！ 24 時間後に、投票状況に応じて自動で決議されます。投票数が足りなかったらまた来ます！"
+	//msgId, err := h.bot.PostMessageEmbed(context.Background(), channelId, msgPlain)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+
+	if err := h.bot.AttachVoteStamps(context.Background(), uuid.FromStringOrNil(messageId)); err != nil {
 		log.Fatal(err)
 	}
 
-	if err := h.bot.AttachVoteStamps(context.Background(), uuid.FromStringOrNil(msgId)); err != nil {
-		log.Fatal(err)
-	}
-
-	if err := h.db.CreateScheduledTask(model.JudgeVote, msgId, p.Message.CreatedAt.Add(24*time.Hour)); err != nil {
+	if err := h.db.CreateScheduledTask(model.JudgeVote, messageId, p.Message.CreatedAt.Add(24*time.Hour)); err != nil {
 		log.Fatal(err)
 	}
 }

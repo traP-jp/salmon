@@ -7,6 +7,7 @@ import (
 	"git.trap.jp/Takeno-hito/salmon/server/model"
 	log "github.com/sirupsen/logrus"
 	"github.com/traPtitech/traq-ws-bot/payload"
+	"strings"
 	"time"
 )
 
@@ -26,9 +27,18 @@ func New(b *bot.Bot, db *model.Client) Handler {
 
 func (h Handler) TraQMessageHandler(p *payload.MessageCreated) {
 	msg := p.Message.PlainText
-	if msg == "/vote" || msg == "@BOT_no_hito_local /vote" {
-		h.traQHandler.StartVote(p)
+	// msg contain @BOT_salmon /vote
+
+	if h.bot.Env() == bot.EnvProduction {
+		if strings.Contains(msg, "/vote") && !strings.Contains(msg, "@BOT_no_hito") {
+			h.traQHandler.StartVote(p)
+		}
+	} else {
+		if strings.Contains(msg, "@BOT_no_hito_local /vote") {
+			h.traQHandler.StartVote(p)
+		}
 	}
+
 }
 
 // TaskConsumeHandler consumes scheduled tasks

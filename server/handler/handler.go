@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"fmt"
 	"git.trap.jp/Takeno-hito/salmon/server/bot"
 	"git.trap.jp/Takeno-hito/salmon/server/handler/internal/traq"
 	"git.trap.jp/Takeno-hito/salmon/server/model"
@@ -30,11 +31,12 @@ func (h Handler) TraQMessageHandler(p *payload.MessageCreated) {
 	// msg contain @BOT_salmon /vote
 
 	if h.bot.Env() == bot.EnvProduction {
-		if strings.Contains(msg, "/vote") && !strings.Contains(msg, "@BOT_no_hito") {
+		if strings.Index(msg, "/vote") == 0 || strings.Index(msg, "@BOT_salmon /vote") == 0 {
 			h.traQHandler.StartVote(p)
 		}
 	} else {
-		if strings.Contains(msg, "@BOT_no_hito_local /vote") {
+		fmt.Println(msg)
+		if strings.Index(msg, "@BOT_no_hito_local /vote") == 0 {
 			h.traQHandler.StartVote(p)
 		}
 	}

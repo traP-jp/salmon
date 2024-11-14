@@ -10,7 +10,6 @@ import (
 // エラーメッセージを柔軟に返却させるために、エラーはここでハンドリングしない
 func (b *Bot) joinOrLeaveHandler(p *payload.MessageCreated) {
 	m := p.Message
-	log.Debug("Received MESSAGE_CREATED event: " + m.Text + " / " + m.PlainText)
 
 	if b.env == EnvProduction {
 		if m.PlainText == "@BOT_salmon /summon" {

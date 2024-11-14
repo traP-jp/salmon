@@ -63,3 +63,14 @@ func (b *Bot) GetMessageFromMessageId(ctx context.Context, id uuid.UUID) (*traq.
 
 	return message, nil
 }
+
+func (b *Bot) SendDirectMessage(ctx context.Context, userID string, content string) error {
+	_, _, err := b.API().
+		MessageApi.
+		PostDirectMessage(ctx, userID).
+		PostMessageRequest(traq.PostMessageRequest{
+			Content: content,
+		}).
+		Execute()
+	return err
+}

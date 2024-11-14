@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"git.trap.jp/Takeno-hito/salmon/server/bot"
 	"github.com/gofrs/uuid"
+	"github.com/traPtitech/go-traq"
 	"strings"
+	"time"
 )
 
 func judge(b *bot.Bot, messageId string) error {
@@ -47,15 +49,38 @@ func judge(b *bot.Bot, messageId string) error {
 	}
 
 	if len(disagreedUsersId) != 0 {
-		messages = append(messages, ":warning: 反対票があります！自動決議はキャンセルされました。")
+		messages = append(messages, ":warning: 反対票があります！")
 	}
 
 	if len(messages) == 0 {
 		messages = append(messages, fmt.Sprintf("賛成票 %d 票で可決されました！", len(agreedUsersId)))
+	} else {
+		messages = append(messages, "自動で決議されませんでした。")
 	}
 
 	messages = append(messages, fmt.Sprintf("debug: agreed count: %d, disagreed count: %d", len(agreedUsersId), len(disagreedUsersId)))
 
-	_, err = b.PostMessageEmbed(context.Background(), msg.ChannelId, fmt.Sprintf("@Takeno_hito \n\n %s", strings.Join(messages, "\n")))
+	_, err = b.PostMessageEmbed(context.Background(), msg.ChannelId, fmt.Sprintf("@Takeno_hito\n\n%s\n%s", strings.Join(messages, "\n"), "https://q.trap.jp/messages/"+msg.Id))
+
+	if err != nil {
+		return err
+	}
+
+	location, err := time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		return err
+	}
+
+	_, err = b.API().
+		MessageApi.EditMessage(context.Background(), msg.Id).
+		PostMessageRequest(traq.PostMessageRequest{
+			Content: fmt.Sprintf("%s\n\n【%s 更新】\n%s", msg.Content, time.Now().In(location).Format("01-02 15:04"), strings.Join(messages, "\n")),
+		}).
+		Execute()
+
+	if err != nil {
+		return err
+	}
+
 	return err
 }

@@ -2,7 +2,6 @@ package traq
 
 import (
 	"context"
-	"git.trap.jp/Takeno-hito/salmon/server/bot"
 	"git.trap.jp/Takeno-hito/salmon/server/model"
 	"github.com/gofrs/uuid"
 	log "github.com/sirupsen/logrus"
@@ -10,18 +9,6 @@ import (
 	"strings"
 	"time"
 )
-
-type Handler struct {
-	bot *bot.Bot
-	db  *model.Client
-}
-
-func New(b *bot.Bot, db *model.Client) Handler {
-	return Handler{
-		bot: b,
-		db:  db,
-	}
-}
 
 func (h Handler) StartVote(p *payload.MessageCreated) {
 	channelId := p.Message.ChannelID

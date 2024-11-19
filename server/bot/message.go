@@ -2,9 +2,25 @@ package bot
 
 import (
 	"context"
+	"fmt"
 	"github.com/gofrs/uuid"
+	log "github.com/sirupsen/logrus"
 	"github.com/traPtitech/go-traq"
 )
+
+func (b *Bot) PostErrorMessage(ctx context.Context, channelID string, err error) {
+	_, _, postError := b.API().
+		MessageApi.
+		PostMessage(ctx, channelID).
+		PostMessageRequest(traq.PostMessageRequest{
+			Content: fmt.Sprintf("エラーが発生しました: %v", err),
+		}).
+		Execute()
+
+	if err != nil {
+		log.Error(postError)
+	}
+}
 
 func (b *Bot) PostMessage(ctx context.Context, channelID string, content string) error {
 	_, _, err := b.API().

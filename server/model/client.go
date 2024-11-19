@@ -16,7 +16,7 @@ func NewClientAndMigrate(user string, pass string, host string, port string, dbn
 	if err != nil {
 		return nil, err
 	}
-	if err := db.AutoMigrate(&ScheduledTask{}); err != nil {
+	if err := db.AutoMigrate(&ScheduledTask{}, &Topic{}); err != nil {
 		return nil, err
 	}
 

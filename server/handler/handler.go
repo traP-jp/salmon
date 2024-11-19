@@ -33,11 +33,23 @@ func (h Handler) TraQMessageHandler(p *payload.MessageCreated) {
 	if h.bot.Env() == bot.EnvProduction {
 		if strings.Index(msg, "/vote") == 0 || strings.Index(msg, "@BOT_salmon /vote") == 0 {
 			h.traQHandler.StartVote(p)
+		} else if strings.Index(msg, "/topic new") == 0 || strings.Index(msg, "@BOT_salmon /topic new") == 0 {
+			h.traQHandler.NewTopic(p)
+		} else if strings.Index(msg, "/topic list") == 0 || strings.Index(msg, "@BOT_salmon /topic list") == 0 {
+			h.traQHandler.GetTopics(p)
+		} else if strings.Index(msg, "/topic close") == 0 || strings.Index(msg, "@BOT_salmon /topic close") == 0 {
+			h.traQHandler.CloseTopic(p)
 		}
 	} else {
 		fmt.Println(msg)
 		if strings.Index(msg, "@BOT_no_hito_local /vote") == 0 {
 			h.traQHandler.StartVote(p)
+		} else if strings.Index(msg, "/topic new") == 0 {
+			h.traQHandler.NewTopic(p)
+		} else if strings.Index(msg, "/topic list") == 0 {
+			h.traQHandler.GetTopics(p)
+		} else if strings.Index(msg, "/topic close") == 0 {
+			h.traQHandler.CloseTopic(p)
 		}
 	}
 

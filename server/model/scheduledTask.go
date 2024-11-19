@@ -22,8 +22,12 @@ type ScheduledTask struct {
 }
 
 func (c Client) CreateScheduledTask(command CommandName, arg string, scheduledAt time.Time) error {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
 	task := ScheduledTask{
-		Id:          uuid.NewString(),
+		Id:          id.String(),
 		Command:     command,
 		Arg:         arg,
 		ScheduledAt: scheduledAt,

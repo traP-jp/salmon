@@ -39,6 +39,8 @@ func (h Handler) TraQMessageHandler(p *payload.MessageCreated) {
 			h.traQHandler.GetTopics(p)
 		} else if strings.Index(msg, "/topic close") == 0 || strings.Index(msg, "@BOT_salmon /topic close") == 0 {
 			h.traQHandler.CloseTopic(p)
+		} else if strings.Index(msg, "/topic rename") == 0 || strings.Index(msg, "@BOT_salmon /topic rename") == 0 {
+			h.traQHandler.RenameTopic(p)
 		}
 	} else {
 		fmt.Println(msg)
@@ -50,9 +52,10 @@ func (h Handler) TraQMessageHandler(p *payload.MessageCreated) {
 			h.traQHandler.GetTopics(p)
 		} else if strings.Index(msg, "/topic close") == 0 {
 			h.traQHandler.CloseTopic(p)
+		} else if strings.Index(msg, "/topic rename") == 0 {
+			h.traQHandler.RenameTopic(p)
 		}
 	}
-
 }
 
 // TaskConsumeHandler consumes scheduled tasks

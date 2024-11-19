@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"git.trap.jp/Takeno-hito/salmon/server/model"
 	log "github.com/sirupsen/logrus"
+	"github.com/traPtitech/go-traq"
 	"github.com/traPtitech/traq-ws-bot/payload"
 	"gorm.io/gorm"
 	"strings"
@@ -68,6 +69,14 @@ func (h Handler) NewTopic(p *payload.MessageCreated) {
 	if err := h.bot.PostMessage(context.Background(), channelId, "https://q.trap.jp/messages/"+messageId); err != nil {
 		log.Error(err)
 	}
+
+	if _, err := h.bot.API().ChannelApi.
+		EditChannelTopic(context.Background(), targetChannelId).
+		PutChannelTopicRequest(traq.PutChannelTopicRequest{
+			Topic: fmt.Sprintf("現在のトピック: %s", topic),
+		}).Execute(); err != nil {
+		log.Error(err)
+	}
 }
 
 // GetTopics : /topic list [topic]
@@ -127,6 +136,70 @@ func (h Handler) CloseTopic(p *payload.MessageCreated) {
 	}
 
 	if err := h.bot.PostMessage(context.Background(), channelId, "アーカイブします。お疲れ様でした！"); err != nil {
+		log.Error(err)
+	}
+
+	if _, err := h.bot.API().ChannelApi.
+		EditChannelTopic(context.Background(), channelId).
+		PutChannelTopicRequest(traq.PutChannelTopicRequest{
+			Topic: "現在進行中のトピックはありません",
+		}).Execute(); err != nil {
+		log.Error(err)
+	}
+}
+
+// RenameTopic : /topic rename [topic]
+func (h Handler) RenameTopic(p *payload.MessageCreated) {
+	channelId := p.Message.ChannelID
+
+	text := p.Message.Text
+	// remove "/topic new "
+	if strings.Index(text, "/topic rename ") == -1 {
+		err := h.bot.PostMessage(context.Background(), channelId, "usage: /topic rename [topic]")
+		if err != nil {
+			log.Error(err)
+		}
+		return
+	}
+	topic := text[strings.Index(text, "/topic rename ")+len("/topic rename "):]
+
+	activeTopic, err := h.db.FindActiveTopicByChannelId(channelId)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			err := h.bot.PostMessage(context.Background(), channelId, "このチャンネルで進行中のトピックがありません。")
+			if err != nil {
+				log.Error(err)
+			}
+			return
+		}
+		err := h.bot.PostMessage(context.Background(), channelId, fmt.Sprintf("エラーが発生しました: %v", err))
+		if err != nil {
+			log.Error(err)
+		}
+	}
+
+	if err := h.db.RenameTopic(activeTopic.Id, topic); err != nil {
+		h.bot.PostErrorMessage(context.Background(), channelId, err)
+	}
+
+	if _, err := h.bot.API().MessageApi.
+		EditMessage(context.Background(), activeTopic.FirstMessageId).
+		PostMessageRequest(traq.PostMessageRequest{
+			Content: fmt.Sprintf("トピック: %s", topic),
+		}).
+		Execute(); err != nil {
+		log.Error(err)
+	}
+
+	if err := h.bot.PostMessage(context.Background(), channelId, "トピック名を変更しました。"); err != nil {
+		log.Error(err)
+	}
+
+	if _, err := h.bot.API().ChannelApi.
+		EditChannelTopic(context.Background(), channelId).
+		PutChannelTopicRequest(traq.PutChannelTopicRequest{
+			Topic: fmt.Sprintf("現在のトピック: %s", topic),
+		}).Execute(); err != nil {
 		log.Error(err)
 	}
 }

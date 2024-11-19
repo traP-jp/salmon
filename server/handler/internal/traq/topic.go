@@ -73,7 +73,7 @@ func (h Handler) NewTopic(p *payload.MessageCreated) {
 	if _, err := h.bot.API().ChannelApi.
 		EditChannelTopic(context.Background(), targetChannelId).
 		PutChannelTopicRequest(traq.PutChannelTopicRequest{
-			Topic: fmt.Sprintf("現在のトピック: %s", topic),
+			Topic: topic,
 		}).Execute(); err != nil {
 		log.Error(err)
 	}
@@ -142,7 +142,7 @@ func (h Handler) CloseTopic(p *payload.MessageCreated) {
 	if _, err := h.bot.API().ChannelApi.
 		EditChannelTopic(context.Background(), channelId).
 		PutChannelTopicRequest(traq.PutChannelTopicRequest{
-			Topic: "現在進行中のトピックはありません",
+			Topic: "",
 		}).Execute(); err != nil {
 		log.Error(err)
 	}
@@ -198,7 +198,7 @@ func (h Handler) RenameTopic(p *payload.MessageCreated) {
 	if _, err := h.bot.API().ChannelApi.
 		EditChannelTopic(context.Background(), channelId).
 		PutChannelTopicRequest(traq.PutChannelTopicRequest{
-			Topic: fmt.Sprintf("現在のトピック: %s", topic),
+			Topic: topic,
 		}).Execute(); err != nil {
 		log.Error(err)
 	}

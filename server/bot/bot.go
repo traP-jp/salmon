@@ -1,8 +1,6 @@
 package bot
 
 import (
-	"context"
-	"git.trap.jp/Takeno-hito/salmon/server/model"
 	log "github.com/sirupsen/logrus"
 	"github.com/traPtitech/go-traq"
 	traqwsbot "github.com/traPtitech/traq-ws-bot"
@@ -43,15 +41,6 @@ func New(botID string, traQAccessToken string, isLocal bool) Bot {
 		botID: botID,
 		bot:   _b,
 		env:   env,
-	}
-
-	if env == EnvProduction {
-		for _, id := range model.TopicChannelIds {
-			_, _ = b.API().BotApi.
-				LetBotJoinChannel(context.Background(), b.botID).PostBotActionJoinRequest(traq.PostBotActionJoinRequest{
-				ChannelId: id,
-			}).Execute()
-		}
 	}
 
 	b.bot.OnError(func(message string) {

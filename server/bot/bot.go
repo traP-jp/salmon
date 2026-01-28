@@ -53,7 +53,7 @@ func New(botID string, traQAccessToken string, isLocal bool) Bot {
 		}
 	}()
 
-	m, _, err := b.API().MeApi.GetMe(nil).Execute()
+	m, _, err := b.API().MeAPI.GetMe(nil).Execute()
 	if err != nil {
 		panic(err)
 	}

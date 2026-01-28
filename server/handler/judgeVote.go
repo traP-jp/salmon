@@ -17,7 +17,7 @@ func judge(b *bot.Bot, messageId string) error {
 	agreedUsersId := make([]string, 0)
 	disagreedUsersId := make([]string, 0)
 
-	groupMembers, _, err := b.API().GroupApi.GetUserGroupMembers(context.Background(), bot.ExecutiveGroupId).Execute()
+	groupMembers, _, err := b.API().GroupAPI.GetUserGroupMembers(context.Background(), bot.ExecutiveGroupId).Execute()
 	groupMembersSet := make(map[string]struct{})
 	for _, member := range groupMembers {
 		groupMembersSet[member.Id] = struct{}{}

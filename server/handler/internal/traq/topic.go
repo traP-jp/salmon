@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+
 	"git.trap.jp/Takeno-hito/salmon/server/model"
 	log "github.com/sirupsen/logrus"
 	"github.com/traPtitech/go-traq"
 	"github.com/traPtitech/traq-ws-bot/payload"
 	"gorm.io/gorm"
-	"strings"
 )
 
 // NewTopic : /topic new [topic]
@@ -58,7 +59,7 @@ func (h Handler) NewTopic(p *payload.MessageCreated) {
 
 	messageId, err := h.bot.PostMessageEmbed(context.Background(), targetChannelId, fmt.Sprintf("トピック: %s", topic))
 
-	if _, _, err := h.bot.API().MessageApi.CreatePin(context.Background(), messageId).Execute(); err != nil {
+	if _, _, err := h.bot.API().MessageAPI.CreatePin(context.Background(), messageId).Execute(); err != nil {
 		log.Error(err)
 	}
 
@@ -70,7 +71,7 @@ func (h Handler) NewTopic(p *payload.MessageCreated) {
 		log.Error(err)
 	}
 
-	if _, err := h.bot.API().ChannelApi.
+	if _, err := h.bot.API().ChannelAPI.
 		EditChannelTopic(context.Background(), targetChannelId).
 		PutChannelTopicRequest(traq.PutChannelTopicRequest{
 			Topic: topic,
@@ -139,7 +140,7 @@ func (h Handler) CloseTopic(p *payload.MessageCreated) {
 		log.Error(err)
 	}
 
-	if _, err := h.bot.API().ChannelApi.
+	if _, err := h.bot.API().ChannelAPI.
 		EditChannelTopic(context.Background(), channelId).
 		PutChannelTopicRequest(traq.PutChannelTopicRequest{
 			Topic: "",
@@ -182,7 +183,7 @@ func (h Handler) RenameTopic(p *payload.MessageCreated) {
 		h.bot.PostErrorMessage(context.Background(), channelId, err)
 	}
 
-	if _, err := h.bot.API().MessageApi.
+	if _, err := h.bot.API().MessageAPI.
 		EditMessage(context.Background(), activeTopic.FirstMessageId).
 		PostMessageRequest(traq.PostMessageRequest{
 			Content: fmt.Sprintf("トピック: %s", topic),
@@ -195,7 +196,7 @@ func (h Handler) RenameTopic(p *payload.MessageCreated) {
 		log.Error(err)
 	}
 
-	if _, err := h.bot.API().ChannelApi.
+	if _, err := h.bot.API().ChannelAPI.
 		EditChannelTopic(context.Background(), channelId).
 		PutChannelTopicRequest(traq.PutChannelTopicRequest{
 			Topic: topic,

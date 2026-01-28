@@ -2,6 +2,7 @@ package bot
 
 import (
 	"context"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/traPtitech/go-traq"
 	"github.com/traPtitech/traq-ws-bot/payload"
@@ -43,7 +44,7 @@ func (b *Bot) joinChannel(m payload.Message) {
 		return
 	}
 
-	_, err := b.API().BotApi.
+	_, err := b.API().BotAPI.
 		LetBotJoinChannel(context.Background(), b.botID).PostBotActionJoinRequest(traq.PostBotActionJoinRequest{
 		ChannelId: m.ChannelID,
 	}).Execute()
@@ -67,7 +68,7 @@ func (b *Bot) leaveChannel(m payload.Message) {
 		return
 	}
 
-	_, err := b.API().BotApi.
+	_, err := b.API().BotAPI.
 		LetBotLeaveChannel(context.Background(), b.botID).PostBotActionLeaveRequest(traq.PostBotActionLeaveRequest{
 		ChannelId: m.ChannelID,
 	}).Execute()

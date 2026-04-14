@@ -18,6 +18,8 @@ var TopicChannelIds = []string{
 	"25e1b813-eb94-41ef-ae27-75373c8b7325", // #7
 	"18e6c506-28ce-44ea-b4ba-e26629b58f34", // #8
 	"01911252-0ba1-7ace-8057-19857d239379", // #9
+	"019d8c27-582e-7c33-9e7c-d755574d1b19", // #10
+	"019d8c27-8035-7c34-b001-cac080ee176a", // #11
 }
 
 type Topic struct {

@@ -2,19 +2,34 @@ package bot
 
 import (
 	"context"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/traPtitech/go-traq"
 	"github.com/traPtitech/traq-ws-bot/payload"
 )
 
-var allowedBotManagers = map[string]bool{
-	"Takeno_hito": true,
-	"zoi_dayo":   true,
+var allowedBotManagers = []string{
+	"Takeno_hito",
+	"zoi_dayo",
 }
 
 func isAllowedBotManager(userName string) bool {
-	return allowedBotManagers[userName]
+	for _, allowedUser := range allowedBotManagers {
+		if userName == allowedUser {
+			return true
+		}
+	}
+	return false
+}
+
+func allowedBotManagersText() string {
+	managers := make([]string, 0, len(allowedBotManagers))
+	for _, userName := range allowedBotManagers {
+		managers = append(managers, ":@"+userName+":")
+	}
+
+	return strings.Join(managers, " または ")
 }
 
 // エラーメッセージを柔軟に返却させるために、エラーはここでハンドリングしない
@@ -46,7 +61,11 @@ func (b *Bot) joinOrLeaveHandler(p *payload.MessageCreated) {
 
 func (b *Bot) joinChannel(m payload.Message) {
 	if !isAllowedBotManager(m.User.Name) {
-		err := b.PostMessage(context.Background(), m.ChannelID, ":@Takeno_hito: または :@zoi_dayo: をよんでください")
+		err := b.PostMessage(
+			context.Background(),
+			m.ChannelID,
+			allowedBotManagersText() + " をよんでください",
+		)
 		if err != nil {
 			log.Error(err)
 		}
@@ -70,7 +89,11 @@ func (b *Bot) joinChannel(m payload.Message) {
 
 func (b *Bot) leaveChannel(m payload.Message) {
 	if !isAllowedBotManager(m.User.Name) {
-		err := b.PostMessage(context.Background(), m.ChannelID, ":@Takeno_hito: または :@zoi_dayo: をよんでください")
+		err := b.PostMessage(
+			context.Background(),
+			m.ChannelID,
+			allowedBotManagersText() + " をよんでください",
+		)
 		if err != nil {
 			log.Error(err)
 		}

@@ -8,6 +8,15 @@ import (
 	"github.com/traPtitech/traq-ws-bot/payload"
 )
 
+var allowedBotManagers = map[string]bool{
+	"Takeno_hito": true,
+	"zoi_dayo":   true,
+}
+
+func isAllowedBotManager(userName string) bool {
+	return allowedBotManagers[userName]
+}
+
 // エラーメッセージを柔軟に返却させるために、エラーはここでハンドリングしない
 func (b *Bot) joinOrLeaveHandler(p *payload.MessageCreated) {
 	m := p.Message
@@ -36,8 +45,8 @@ func (b *Bot) joinOrLeaveHandler(p *payload.MessageCreated) {
 }
 
 func (b *Bot) joinChannel(m payload.Message) {
-	if m.User.Name != "Takeno_hito" {
-		err := b.PostMessage(context.Background(), m.ChannelID, "Takeno_hito をよんでください")
+	if !isAllowedBotManager(m.User.Name) {
+		err := b.PostMessage(context.Background(), m.ChannelID, ":@Takeno_hito: または :@zoi_dayo: をよんでください")
 		if err != nil {
 			log.Error(err)
 		}
@@ -60,8 +69,8 @@ func (b *Bot) joinChannel(m payload.Message) {
 }
 
 func (b *Bot) leaveChannel(m payload.Message) {
-	if m.User.Name != "Takeno_hito" {
-		err := b.PostMessage(context.Background(), m.ChannelID, "Takeno_hito をよんでください")
+	if !isAllowedBotManager(m.User.Name) {
+		err := b.PostMessage(context.Background(), m.ChannelID, ":@Takeno_hito: または :@zoi_dayo: をよんでください")
 		if err != nil {
 			log.Error(err)
 		}
